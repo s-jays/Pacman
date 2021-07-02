@@ -124,7 +124,7 @@ public class Moving extends GameObject {
         // As a default, all Moving objects will begin facing left.
         this.orientation = State.LEFT;
         this.speed = speed;
-        this.canTurn = true;
+        this.canTurn = false;
         this.willCollide = false;
     }
 

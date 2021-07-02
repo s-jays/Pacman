@@ -68,7 +68,7 @@ public abstract class Ghost extends Moving {
     /**
      * Stores the current frame count.
      */
-    protected int frameCount;
+    protected int modeTimer;
 
     /**
      * Stores the duration Ghost is to be frightened for.
@@ -104,15 +104,13 @@ public abstract class Ghost extends Moving {
         
         this.xDraw -= Ghost.GHOST_X_OFFSET;
         this.currentMode = 0;
-        this.frameCount = 0;
+        this.modeTimer = 0;
         this.frightenedCount = 0;
         this.state = GhostState.SCATTER;
         this.frightenedSprite = app.loadImage("src/main/resources/frightened.png");
 
         this.xTarget = 0;
         this.yTarget = 0;
-
-        this.canTurn = false;
     }
 
     /**
@@ -130,14 +128,14 @@ public abstract class Ghost extends Moving {
             }
 
         } else {
-            this.frameCount ++;
+            this.modeTimer --;
             
-            if (this.frameCount >= this.ghostModes[this.currentMode] * 60) {
+            if (this.modeTimer == 0) {
                 // Once the Ghost has remained in its current mode for a sufficient amount of
                 // time, it will switch to the next mode.
-                this.frameCount = 0;
                 this.currentMode ++;
                 this.currentMode %= this.ghostModes.length;
+                this.modeTimer = this.ghostModes[this.currentMode] * 60;
                 this.state = this.state.switchState();
             }    
         }
@@ -167,6 +165,7 @@ public abstract class Ghost extends Moving {
     }
 
     public void setGhostMode(int[] modes) {
+        this.modeTimer = modes[0] * 60;
         this.ghostModes = modes;
     }
 
@@ -352,3 +351,4 @@ public abstract class Ghost extends Moving {
      */
     public abstract void changeTarget(Map map, Moving object);
 }
+// TODO: GameManager should tick() for all Ghosts, regardless of whether they're on the map?
