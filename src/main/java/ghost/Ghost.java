@@ -21,7 +21,7 @@ enum GhostState {
     },
     FRIGHTENED {
         public GhostState switchState() {
-            return SCATTER;
+            return null;
         }
     };
 
@@ -231,6 +231,7 @@ public abstract class Ghost extends Moving {
      * Sets the Ghost's current state to Frightened and alters sprite to reflect the change.
      */
     public void frightenGhost() {
+
         this.state = GhostState.FRIGHTENED;
         this.frightenedCount = this.frightenedLength * 60;
         this.sprite = this.frightenedSprite;
@@ -242,6 +243,7 @@ public abstract class Ghost extends Moving {
      * @param app
      */
     public void drawDebug(PApplet app) {
+
         int offset = GameObject.SPRITE_SIZE / 2;
         app.stroke(255);
         app.line(this.xDraw + offset, this.yDraw + offset, this.xTarget, this.yTarget);
@@ -264,6 +266,7 @@ public abstract class Ghost extends Moving {
      * Resets Ghost movements to starting mode.
      */
     public void respawn() {
+        
         this.currentMode = 0;
         this.modeTimer = this.ghostModes[this.currentMode] * 60;
         this.state = GhostState.SCATTER;

@@ -66,7 +66,7 @@ public class App extends PApplet {
             } else {
                 endText = "GAME OVER";
             }
-            this.text(endText, WIDTH / 2, 240);
+            this.text(endText, WIDTH / 2, 235);
             
             // Reloads game after 10 seconds.
             this.frameCount ++;
