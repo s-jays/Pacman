@@ -389,7 +389,7 @@ public class GameManager {
                 // If the Ghost is Frightened, it resumes its previous State and is temporarily 
                 // removed from the Map.
                 if (ghost.getState() == GhostState.FRIGHTENED) {
-                    ghost.resumeNormal();
+                    ghost.resetState();
                     this.ghosts.remove(ghost);
                     this.removedGhosts.add(ghost);
                 

@@ -71,7 +71,7 @@ public abstract class Ghost extends Moving {
     protected int frameCount;
 
     /**
-     * Stores the duration Ghost has been frightened for.
+     * Stores the duration Ghost is to be frightened for.
      */
     protected int frightenedCount;
 
@@ -121,14 +121,14 @@ public abstract class Ghost extends Moving {
     public void tick() {
 
         if (this.state == GhostState.FRIGHTENED) {
-            this.frightenedCount ++;
+            this.frightenedCount --;
             
-            if (this.frightenedCount >= this.frightenedLength * 60) {
+            if (this.frightenedCount == 0) {
                 // Once the time the Ghost has remained for has surpassed the specified Frightened
                 // duration, the frightenedCount and Ghost state will be reset to the previous mode
-                this.frightenedCount = 0;
-                this.resumeNormal();
+                this.resetState();
             }
+
         } else {
             this.frameCount ++;
             
@@ -137,9 +137,11 @@ public abstract class Ghost extends Moving {
                 // time, it will switch to the next mode.
                 this.frameCount = 0;
                 this.modeTraverse ++;
-                if (this.modeTraverse >= this.ghostModes.length) {
-                    this.modeTraverse = 0;
-                }
+                this.modeTraverse %= this.ghostModes.length;
+                //if (this.modeTraverse >= this.ghostModes.length) {
+                //    this.modeTraverse = 0;
+                //}
+                // TODO: Check if modulo works
                 this.state = this.state.switchState();
             }    
         }
@@ -233,6 +235,7 @@ public abstract class Ghost extends Moving {
      */
     public void frightenGhost() {
         this.state = GhostState.FRIGHTENED;
+        this.frightenedCount = this.frightenedLength;
         this.sprite = this.frightenedSprite;
     }
 
@@ -249,13 +252,15 @@ public abstract class Ghost extends Moving {
     /**
      * Switches GhostState back to its previous State.
      */
-    public void resumeNormal() {
+    public void resetState() {
+
         if (this.modeTraverse % 2 == 0) {
             this.state = GhostState.SCATTER;
         } else {
             this.state = GhostState.CHASE;
         }
         this.sprite = this.normalSprite;
+        // TODO
     }
 
     /**
