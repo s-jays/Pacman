@@ -25,6 +25,7 @@ enum GhostState {
 
     /**
      * Upon being called, the function returns a GhostState switched according to the current one.
+     * 
      * @return Scatter will return Chase, Chase will return Scatter and Frightened will return 
      * Scatter.
      */
