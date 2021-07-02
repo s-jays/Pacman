@@ -231,7 +231,7 @@ public abstract class Ghost extends Moving {
      */
     public void frightenGhost() {
         this.state = GhostState.FRIGHTENED;
-        this.frightenedCount = this.frightenedLength;
+        this.frightenedCount = this.frightenedLength * 60;
         this.sprite = this.frightenedSprite;
     }
 
