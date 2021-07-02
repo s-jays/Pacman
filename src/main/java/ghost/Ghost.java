@@ -1,5 +1,7 @@
 package ghost;
 
+import java.util.Random;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -165,7 +167,7 @@ public abstract class Ghost extends Moving {
     }
 
     public void setGhostMode(int[] modes) {
-        this.modeTimer = modes[0] * 60;
+        this.modeTimer = modes[this.currentMode] * 60;
         this.ghostModes = modes;
     }
 
@@ -226,7 +228,7 @@ public abstract class Ghost extends Moving {
     }
 
     /**
-     * Sets the Ghost's current state to Frightened and alter the sprite to reflect the change.
+     * Sets the Ghost's current state to Frightened and alters sprite to reflect the change.
      */
     public void frightenGhost() {
         this.state = GhostState.FRIGHTENED;
@@ -236,6 +238,7 @@ public abstract class Ghost extends Moving {
 
     /**
      * Draws a white line from the Ghost to its target position in Debug mode
+     * 
      * @param app
      */
     public void drawDebug(PApplet app) {
@@ -255,15 +258,37 @@ public abstract class Ghost extends Moving {
             this.state = GhostState.CHASE;
         }
         this.sprite = this.normalSprite;
-        // TODO
+    }
+
+    /**
+     * Resets Ghost movements to starting mode.
+     */
+    public void respawn() {
+        this.currentMode = 0;
+        this.modeTimer = this.ghostModes[this.currentMode] * 60;
+        this.state = GhostState.SCATTER;
+        this.sprite = this.normalSprite;
     }
 
     /**
      * Calculates and sets the Ghost's next move to be the one that will enable it to move
      * closest to its target.
+     * 
      * @param map
      */
-    protected void modeMovement(Map map) {
+    protected void setNextMove(Map map) {
+
+        if (this.state == GhostState.FRIGHTENED) {
+            int min = 0;
+            int xMax = map.getCols() * GameObject.SPRITE_SIZE;
+            int yMax = map.getRows() * GameObject.SPRITE_SIZE;
+
+            int xTarget = new Random().nextInt((xMax - min) + 1) + min;
+            int yTarget = new Random().nextInt((yMax - min) + 1) + min;
+            xTarget = setXLimit(map, xTarget);
+            yTarget = setYLimit(map, yTarget);
+            this.setTarget(xTarget, yTarget);
+        }
 
         State opposite = this.orientation.getOpposite();
         State next = opposite;
@@ -351,4 +376,4 @@ public abstract class Ghost extends Moving {
      */
     public abstract void changeTarget(Map map, Moving object);
 }
-// TODO: GameManager should tick() for all Ghosts, regardless of whether they're on the map?
+// TODO: GameManager should be less involved in Ghost, Waka, etc. logic

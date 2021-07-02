@@ -75,26 +75,28 @@ public class GameManager {
         for (int i = 0; i < this.ghosts.size(); i ++) {
             Ghost ghost = this.ghosts.get(i);
 
-            if (ghost instanceof Whim) {
-                Ghost chaser = null;
-                for (int j = 0; j < this.ghosts.size(); j ++) {
-                    if (this.ghosts.get(j) instanceof Chaser) {
-                        chaser = this.ghosts.get(j);
-                        break;
+            if (ghost.getState() != GhostState.FRIGHTENED) {
+                if (ghost instanceof Whim) {
+                    Ghost chaser = null;
+                    for (int j = 0; j < this.ghosts.size(); j ++) {
+                        if (this.ghosts.get(j) instanceof Chaser) {
+                            chaser = this.ghosts.get(j);
+                            break;
+                        }
                     }
-                }
-                if (chaser != null) {
-                    ghost.changeTarget(map, chaser);
+                    if (chaser != null) {
+                        ghost.changeTarget(map, chaser);
+                    } else {
+                        ghost.changeTarget(map, player);
+                    }
+
                 } else {
                     ghost.changeTarget(map, player);
                 }
-
-            } else {
-                ghost.changeTarget(map, player);
             }
 
             if (ghost.atIntersection(this.map)) {
-                ghost.modeMovement(this.map);
+                ghost.setNextMove(this.map);
             } else {
                 if (ghost.atDeadEnd(map)) {
                     ghost.setNextMove(ghost.getOrientation().getOpposite());
@@ -424,6 +426,7 @@ public class GameManager {
 
         // Resets all Ghosts to starting positions.
         for (int j = 0; j < this.ghosts.size(); j ++) {
+            this.ghosts.get(j).respawn();
             this.ghosts.get(j).resetPos();
         }
         this.player.resetPos();
