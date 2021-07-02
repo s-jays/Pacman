@@ -2,8 +2,13 @@ ghost/Fixed.java
  ghost.Fixed
 ghost/Whim.java
  ghost.Whim
-ghost/Ignorant.java
- ghost.Ignorant
+ghost/Ghost.java
+ ghost.Ghost
+ ghost.Ghost$1
+ ghost.GhostState
+ ghost.GhostState$1
+ ghost.GhostState$2
+ ghost.GhostState$3
 ghost/Moving.java
  ghost.Moving
  ghost.State
@@ -17,9 +22,8 @@ ghost/Wall.java
  ghost.Wall
  ghost.Wall$1
  ghost.WallType
-ghost/Map.java
- ghost.Map
- ghost.Map$1
+ghost/App.java
+ ghost.App
 ghost/Chaser.java
  ghost.Chaser
 ghost/GameObject.java
@@ -36,12 +40,8 @@ ghost/GameManager.java
  ghost.GameManager
 ghost/Fruit.java
  ghost.Fruit
-ghost/Ghost.java
- ghost.Ghost
- ghost.Ghost$1
- ghost.GhostState
- ghost.GhostState$1
- ghost.GhostState$2
- ghost.GhostState$3
-ghost/App.java
- ghost.App
+ghost/Map.java
+ ghost.Map
+ ghost.Map$1
+ghost/Ignorant.java
+ ghost.Ignorant

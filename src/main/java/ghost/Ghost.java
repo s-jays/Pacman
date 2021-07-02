@@ -63,7 +63,7 @@ public abstract class Ghost extends Moving {
     /**
      * Monitors the current ghost mode iteration.
      */
-    protected int modeTraverse;
+    protected int currentMode;
 
     /**
      * Stores the current frame count.
@@ -103,7 +103,7 @@ public abstract class Ghost extends Moving {
         super(x, y, speed);
         
         this.xDraw -= Ghost.GHOST_X_OFFSET;
-        this.modeTraverse = 0;
+        this.currentMode = 0;
         this.frameCount = 0;
         this.frightenedCount = 0;
         this.state = GhostState.SCATTER;
@@ -132,16 +132,12 @@ public abstract class Ghost extends Moving {
         } else {
             this.frameCount ++;
             
-            if (this.frameCount >= this.ghostModes[this.modeTraverse] * 60) {
+            if (this.frameCount >= this.ghostModes[this.currentMode] * 60) {
                 // Once the Ghost has remained in its current mode for a sufficient amount of
                 // time, it will switch to the next mode.
                 this.frameCount = 0;
-                this.modeTraverse ++;
-                this.modeTraverse %= this.ghostModes.length;
-                //if (this.modeTraverse >= this.ghostModes.length) {
-                //    this.modeTraverse = 0;
-                //}
-                // TODO: Check if modulo works
+                this.currentMode ++;
+                this.currentMode %= this.ghostModes.length;
                 this.state = this.state.switchState();
             }    
         }
@@ -254,7 +250,7 @@ public abstract class Ghost extends Moving {
      */
     public void resetState() {
 
-        if (this.modeTraverse % 2 == 0) {
+        if (this.currentMode % 2 == 0) {
             this.state = GhostState.SCATTER;
         } else {
             this.state = GhostState.CHASE;

@@ -30,6 +30,7 @@ public class Ignorant extends Ghost {
         
         if (this.state == GhostState.SCATTER) {
             this.setTarget(0, map.getRows() * GameObject.SPRITE_SIZE);
+
         } else {
             int playerX = object.getX();
             int playerY = object.getY();
@@ -43,8 +44,9 @@ public class Ignorant extends Ghost {
                 int targetX = playerX + GameObject.SPRITE_SIZE / 2;
                 int targetY = playerY + GameObject.SPRITE_SIZE / 2;
                 this.setTarget(targetX, targetY);
+
             } else {
-                this.setTarget(0, map.getPlayerRow() * GameObject.SPRITE_SIZE);
+                this.setTarget(0, map.getRows() * GameObject.SPRITE_SIZE);
             }
         }
     } 
