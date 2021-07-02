@@ -28,6 +28,7 @@ public class Map {
      * @param app
      */
     public Map(List<Character[]> mapText, PApplet app) {
+
         this.mapText = mapText;
         this.rows = mapText.size();
         this.cols = mapText.get(0).length;
@@ -88,7 +89,10 @@ public class Map {
      * @return the created 2d Wall layout of the Map.
      */
     private Wall[][] initMap(PApplet app) {
+
         Wall[][] wallArray = new Wall[this.rows][this.cols];
+        int numPlayer = 0;
+        int numFruit = 0;
 
         for (int i = 0; i < this.rows; i ++) {
             for (int j = 0; j < this.cols; j ++) {
@@ -105,15 +109,18 @@ public class Map {
                     
                     case '7':
                         fruits.add(new Fruit(j, i, app));
+                        numFruit ++;
                         break;
 
                     case '8':
                         fruits.add(new SuperFruit(j, i, app));
+                        numFruit ++;
                         break;
 
                     case 'p':
                         this.playerStartRow = j;
                         this.playerStartCol = i;
+                        numPlayer ++;
                         break;
 
                     case 'a':
@@ -135,6 +142,15 @@ public class Map {
                 wallArray[i][j] = cell;
             }
         }
+
+        if (numPlayer == 0) {
+            System.out.println("Error: No player present.");
+            System.exit(1);
+
+        } else if (numFruit == 0) {
+            System.out.println("Error: No fruit on game map.");
+            System.exit(1);
+        }
         return wallArray;
     }
 
@@ -142,6 +158,7 @@ public class Map {
      * Returns true if argument object has 'collided' with any Wall objects, otherwise returns
      * false. Object boundaries are checked against all Wall boundaries and the presence of an
      * overlap is returned.
+     * 
      * @param object the object to be checked for collision.
      * @param checkTurn specifies whether to check for collision upon turning or upon continual
      * movement in object's current direction. Argument is true if checking for possible turns,

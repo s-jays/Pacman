@@ -107,11 +107,13 @@ public class Moving extends GameObject {
 
     /**
      * Creates an instance of Moving, given an x and y position and a movement speed.
+     * 
      * @param x
      * @param y
      * @param speed, the speed at which the object is able to move.
      */
     public Moving(int x, int y, int speed) {
+        
         super(x, y);
 
         this.xDraw = this.x - Moving.X_OFFSET;

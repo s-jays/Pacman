@@ -60,15 +60,16 @@ public class App extends PApplet {
         } else {
 
             // Draws either game over or victory screen if game has ended.
+            String endText = null;
             if (this.game.playerWin()) {
-                this.text("YOU WIN", WIDTH / 2, 240);
+                endText = "YOU WIN";
             } else {
-                this.text("GAME OVER", WIDTH / 2, 240);
+                endText = "GAME OVER";
             }
+            this.text(endText, WIDTH / 2, 240);
             
             // Reloads game after 10 seconds.
             this.frameCount ++;
-
             if (this.frameCount > 10 * 60) {
                 this.setup();
 

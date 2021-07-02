@@ -37,6 +37,8 @@ enum GhostState {
  */
 public abstract class Ghost extends Moving {
 
+    public static final int GHOST_X_OFFSET = 2;
+
     /**
      * Stores duration of the Scatter and Chase ghost modes.
      */
@@ -80,15 +82,16 @@ public abstract class Ghost extends Moving {
     /**
      * Stores the x position of the Ghost target.
      */
-    protected int targetX;
+    protected int xTarget;
 
     /**
      * Stores the y position of the Ghost target.
      */
-    protected int targetY;
+    protected int yTarget;
 
     /**
      * Creates an instance of Ghost, given starting x and y positions and a movement speed.
+     * 
      * @param x
      * @param y
      * @param speed
@@ -98,14 +101,15 @@ public abstract class Ghost extends Moving {
         
         super(x, y, speed);
         
+        this.xDraw -= Ghost.GHOST_X_OFFSET;
         this.modeTraverse = 0;
         this.frameCount = 0;
         this.frightenedCount = 0;
         this.state = GhostState.SCATTER;
         this.frightenedSprite = app.loadImage("src/main/resources/frightened.png");
 
-        this.targetX = 0;
-        this.targetY = 0;
+        this.xTarget = 0;
+        this.yTarget = 0;
 
         this.canTurn = false;
     }
@@ -147,11 +151,11 @@ public abstract class Ghost extends Moving {
     }
 
     public int getTargetX() {
-        return this.targetX;
+        return this.xTarget;
     }
 
     public int getTargetY() {
-        return this.targetY;
+        return this.yTarget;
     }
 
     public void setSpeed(int speed) {
@@ -159,8 +163,8 @@ public abstract class Ghost extends Moving {
     }
 
     protected void setTarget(int x, int y) {
-        this.targetX = x;
-        this.targetY = y;
+        this.xTarget = x;
+        this.yTarget = y;
     }
 
     public void setGhostMode(int[] modes) {
@@ -173,6 +177,7 @@ public abstract class Ghost extends Moving {
 
     /**
      * Determines whether or not Ghost is at an intersection on the Map.
+     * 
      * @param map the game map
      * @return true if Ghost is at an intersection; false otherwise.
      */
@@ -193,6 +198,23 @@ public abstract class Ghost extends Moving {
         }
         this.nextMove = prevNext;
         return (canTurn >= 1);
+    }
+
+    /**
+     * Determines whether or not Ghost is at a dead end, i.e. can only move backwards.
+     * 
+     * @param map the game map.
+     * @return true if Ghost is at a dead end; false otherwise.
+     */
+    public boolean atDeadEnd(Map map) {
+
+        State current = this.orientation;
+        State prevNext = this.nextMove;
+
+        this.nextMove = current;
+        boolean atDeadEnd = map.checkWallCollision(this, true);
+        this.nextMove = prevNext;
+        return atDeadEnd;
     }
     
     /**
@@ -220,7 +242,7 @@ public abstract class Ghost extends Moving {
     public void drawDebug(PApplet app) {
         int offset = GameObject.SPRITE_SIZE / 2;
         app.stroke(255);
-        app.line(this.xDraw + offset, this.yDraw + offset, this.targetX, this.targetY);
+        app.line(this.xDraw + offset, this.yDraw + offset, this.xTarget, this.yTarget);
     }
     
     /**
@@ -276,20 +298,20 @@ public abstract class Ghost extends Moving {
 
         switch (this.nextMove) {
             case LEFT:
-                xDist = (this.x - GameObject.SPRITE_SIZE) - this.targetX;
-                yDist = this.y - this.targetY;
+                xDist = (this.x - GameObject.SPRITE_SIZE) - this.xTarget;
+                yDist = this.y - this.yTarget;
                 break;
             case RIGHT:
-                xDist = (this.x + GameObject.SPRITE_SIZE) - this.targetX;
-                yDist = this.y - this.targetY;
+                xDist = (this.x + GameObject.SPRITE_SIZE) - this.xTarget;
+                yDist = this.y - this.yTarget;
                 break;
             case UP:
-                xDist = this.x - this.targetX;
-                yDist = (this.y - GameObject.SPRITE_SIZE) - this.targetY;
+                xDist = this.x - this.xTarget;
+                yDist = (this.y - GameObject.SPRITE_SIZE) - this.yTarget;
                 break;
             case DOWN:
-                xDist = this.x - this.targetX;
-                yDist = (this.y + GameObject.SPRITE_SIZE) - this.targetY;
+                xDist = this.x - this.xTarget;
+                yDist = (this.y + GameObject.SPRITE_SIZE) - this.yTarget;
                 break;
         }
         return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
@@ -305,6 +327,7 @@ public abstract class Ghost extends Moving {
                 xTarget = xLimit;
             }
         }
+        return xTarget;
     }
 
     protected int setYLimit(Map map, int yTarget) {
@@ -313,10 +336,11 @@ public abstract class Ghost extends Moving {
             yTarget = 0;
         } else {
             int yLimit = map.getRows() * GameObject.SPRITE_SIZE;
-            if (yTarget > xLimit) {
-                yTarget = xLimit;
+            if (yTarget > yLimit) {
+                yTarget = yLimit;
             }
         }
+        return yTarget;
     }
 
     /**

@@ -95,6 +95,10 @@ public class GameManager {
 
             if (ghost.atIntersection(this.map)) {
                 ghost.modeMovement(this.map);
+            } else {
+                if (ghost.atDeadEnd(map)) {
+                    ghost.setNextMove(ghost.getOrientation().getOpposite());
+                }
             }
             this.setWallCollision(ghost);
             ghost.tick();
