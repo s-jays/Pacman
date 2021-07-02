@@ -30,13 +30,15 @@ public class Chaser extends Ghost {
      */
     public void changeTarget(Map map, Moving object) {
 
-        int targetX = 0;
-        int targetY = 0;
+        int xTarget = 0;
+        int yTarget = 0;
 
         if (this.state == GhostState.CHASE) {
-            targetX = object.getX() + GameObject.SPRITE_SIZE / 2;
-            targetY = object.getY() + GameObject.SPRITE_SIZE / 2;
+            xTarget = object.getX() + GameObject.SPRITE_SIZE / 2;
+            yTarget = object.getY() + GameObject.SPRITE_SIZE / 2;
         }
-        this.setTarget(targetX, targetY);
+        xTarget = setXLimit(map, xTarget);
+        yTarget = setYLimit(map, yTarget);
+        this.setTarget(xTarget, yTarget);
     }
 }

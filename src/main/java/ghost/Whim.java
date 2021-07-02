@@ -42,45 +42,29 @@ public class Whim extends Ghost {
                 setWhimTarget(map, chaser);
 
             } catch (ClassCastException e) {
-                int targetX = object.getX() + GameObject.SPRITE_SIZE / 2;
-                int targetY = object.getY() + GameObject.SPRITE_SIZE / 2;
+                int xTarget = object.getX() + GameObject.SPRITE_SIZE / 2;
+                int yTarget = object.getY() + GameObject.SPRITE_SIZE / 2;
+                xTarget = this.setXLimit(map, xTarget);
+                yTarget = this.setYLimit(map, yTarget);
 
-                if (targetX < 0) {
-                    targetX = 0;
-                } else if (targetX > map.getCols() * GameObject.SPRITE_SIZE) {
-                    targetX = map.getCols() * GameObject.SPRITE_SIZE;
-                }
-                if (targetY < 0) {
-                    targetY = 0;
-                } else if (targetY > map.getRows() * GameObject.SPRITE_SIZE) {
-                    targetY = map.getRows() * GameObject.SPRITE_SIZE;
-                }
-                this.setTarget(targetX, targetY);
+                this.setTarget(xTarget, yTarget);
             }
         }
     }
 
     public void setWhimTarget(Map map, Ghost chaser) {
 
-        int chaserTargetX = chaser.getTargetX();
-        int chaserTargetY = chaser.getTargetY();
+        int chaserXTarget = chaser.getTargetX();
+        int chaserYTarget = chaser.getTargetY();
         int chaserX = chaser.getX();
         int chaserY = chaser.getY();
 
-        int targetX = 2 * chaserTargetX - chaserX;
-        int targetY = 2 * chaserTargetY - chaserY;
-
-        if (targetX < 0) {
-            targetX = 0;
-        } else if (targetX > map.getCols() * GameObject.SPRITE_SIZE) {
-            targetX = map.getCols() * GameObject.SPRITE_SIZE;
-        }
-        if (targetY < 0) {
-            targetY = 0;
-        } else if (targetY > map.getRows() * GameObject.SPRITE_SIZE) {
-            targetY = map.getRows() * GameObject.SPRITE_SIZE;
-        }
-        this.setTarget(targetX, targetY);
+        int xTarget = 2 * chaserXTarget - chaserX;
+        int yTarget = 2 * chaserYTarget - chaserY;
+        xTarget = this.setXLimit(map, xTarget);
+        yTarget = this.setYLimit(map, yTarget);
+        
+        this.setTarget(xTarget, yTarget);
     }
 }
 //TODO - SET LIMITS/OUT OF RANGE LIMITS FOR ALL GHOSTS - potentially set up error checking in Ghost itself?

@@ -295,6 +295,30 @@ public abstract class Ghost extends Moving {
         return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
     }
 
+    protected int setXLimit(Map map, int xTarget) {
+        
+        if (xTarget < 0) {
+            xTarget = 0;
+        } else {
+            int xLimit = map.getCols() * GameObject.SPRITE_SIZE;
+            if (xTarget > xLimit) {
+                xTarget = xLimit;
+            }
+        }
+    }
+
+    protected int setYLimit(Map map, int yTarget) {
+        
+        if (yTarget < 0) {
+            yTarget = 0;
+        } else {
+            int yLimit = map.getRows() * GameObject.SPRITE_SIZE;
+            if (yTarget > xLimit) {
+                yTarget = xLimit;
+            }
+        }
+    }
+
     /**
      * Changes the Ghost target. Target varies for each type of Ghost.
      * @param map

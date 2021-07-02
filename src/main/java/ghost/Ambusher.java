@@ -32,12 +32,12 @@ public class Ambusher extends Ghost {
      */
     public void changeTarget(Map map, Moving object) {
         
-        int targetX = object.getX();
-        int targetY = object.getY();
+        int xTarget = object.getX();
+        int yTarget = object.getY();
         
         if (this.state == GhostState.SCATTER) {
-            targetX = map.getCols() * GameObject.SPRITE_SIZE;
-            targetY = 0;
+            xTarget = map.getCols() * GameObject.SPRITE_SIZE;
+            yTarget = 0;
 
         } else {            
             // Alters target x and y values according to the Waka's orientation in order to get
@@ -48,39 +48,27 @@ public class Ambusher extends Ghost {
 
             switch (direction) {
                 case LEFT:
-                    targetX -= 4 * GameObject.SPRITE_SIZE;
-                    if (targetX < 0) {
-                        targetX = 0;
-                    }
+                    xTarget -= 4 * GameObject.SPRITE_SIZE;
                     break;
 
                 case RIGHT:
-                    targetX += 4 * GameObject.SPRITE_SIZE;
-                    int xLimit = map.getCols() * GameObject.SPRITE_SIZE;
-                    if (targetX > xLimit) {
-                        targetX = xLimit;
-                    }
+                    xTarget += 4 * GameObject.SPRITE_SIZE;
                     break;
                     
                 case UP:
-                    targetY -= 4 * GameObject.SPRITE_SIZE;
-                    if (targetY < 0) {
-                        targetY = 0;
-                    }
+                    yTarget -= 4 * GameObject.SPRITE_SIZE;
                     break;
 
                 case DOWN:
-                    targetY += 4 * GameObject.SPRITE_SIZE;
-                    int yLimit = map.getRows() * GameObject.SPRITE_SIZE;
-                    if (targetY > yLimit) {
-                        targetY = yLimit;
-                    }
+                    yTarget += 4 * GameObject.SPRITE_SIZE;
                     break;
             }
             // Offsets the target x and y to indicate the centre of the Waka cell
-            targetX += GameObject.SPRITE_SIZE / 2;
-            targetY += GameObject.SPRITE_SIZE / 2;
+            xTarget = this.setXLimit(map, xTarget);
+            yTarget = this.setYLimit(map, yTarget);
+            xTarget += GameObject.SPRITE_SIZE / 2;
+            yTarget += GameObject.SPRITE_SIZE / 2;
         }
-        this.setTarget(targetX, targetY);
+        this.setTarget(xTarget, yTarget);
     }
 }
