@@ -17,12 +17,7 @@ import processing.core.PImage;
  */
 public class GameManager {
     
-    private int playerLives;
-    private int speed;
-    private int frightenedLength;
-    private int[] ghostModes;
-
-    private String mapName;
+    private Settings settings;
     private Map map;
 
     private List<Edible> fruits;
@@ -30,7 +25,9 @@ public class GameManager {
     private List<Ghost> removedGhosts;
 
     private Waka player;
+    private int playerLives;
     private PImage livesSprite;
+    
     private boolean debugMode;
     private boolean running;
     private boolean win;
@@ -44,8 +41,9 @@ public class GameManager {
      */
     public GameManager(PApplet app) {
 
-        this.parseConfigFile("config.json");
-        this.map = new Map(this.loadMap(this.mapName), app);
+        this.settings = new Settings();
+        this.settings.parseConfigFile("config.json");
+        this.map = new Map(settings.getMapName(), app);
 
         this.fruits = new ArrayList<Edible>(this.map.getFruits());
         this.ghosts = new ArrayList<Ghost>(this.map.getGhosts());
@@ -133,106 +131,16 @@ public class GameManager {
     }
 
     /**
-     * Processes and stores game settings from the configuration file for later use in setting
-     * up the game.
-     * 
-     * @param filename the game configuration file.
-     */
-    private void parseConfigFile(String filename) {
-
-        if (filename == null) {
-            System.out.println("Error: File does not exist.");
-            return;
-
-        } else {
-            JSONParser jsonParser = new JSONParser();
-            
-            try {
-                FileReader reader = new FileReader(filename);
-                Object obj = jsonParser.parse(reader);
-
-                // Retrieves player lives, movement speed.
-                JSONObject description = (JSONObject)obj;
-                this.playerLives = ((Long)description.get("lives")).intValue();
-                this.speed = ((Long)description.get("speed")).intValue();
-                
-                // Retrieves ghost frightened mode, and ghost mode durations.
-                this.frightenedLength = ((Long)description.get("frightenedLength")).intValue();
-                JSONArray jsonArray = (JSONArray)description.get("modeLengths");
-                this.ghostModes = new int[jsonArray.size()];
-                for (int i = 0; i < jsonArray.size(); i ++) {
-                    this.ghostModes[i] = ((Long)jsonArray.get(i)).intValue();
-                }
-
-                // Retrieves the name of the map layout that is to be used in game.
-                this.mapName = (String)description.get("map");
-
-            } catch (FileNotFoundException e) {
-                System.out.println("Error: File does not exist.");
-
-            } catch (IOException e) {
-                System.out.println("Error: File could not be parsed.");
-
-            } catch (ParseException e) {
-                System.out.println("Error: File could not be parsed.");
-            }
-        }
-    }
-
-    /**
-     * Processes the text file of the Map layout into a list of characters.
-     * 
-     * @param filename the name of the Map file.
-     * @return a 2D list of the Map characters.
-     */
-    private List<Character[]> loadMap(String filename) {
-
-        if (filename == null) {
-            System.out.println("Error: File does not exist.");
-            return null;
-
-        } else {        
-            File mapFile = new File(filename);
-            List<Character[]> mapCharas = new ArrayList<Character[]>();
-
-            try {
-                Scanner scan = new Scanner(mapFile);
-
-                while (scan.hasNextLine()) {
-                    String line = scan.nextLine();
-                    char[] lineChars = line.toCharArray();
-                    if (lineChars.length == 0) {
-                        System.out.println("Error: Invalid file configuration.");
-                        System.exit(1);
-                    }
-
-                    // Converts individual chars in the char array into Characters for storage 
-                    // in the List and adds them to the 2d layout line by line.
-                    Character[] charArray = new Character[lineChars.length];
-                    for (int i = 0; i < lineChars.length; i ++) {
-                        charArray[i] = Character.valueOf(lineChars[i]);
-                    }
-                    mapCharas.add(charArray);
-                }
-                scan.close();
-
-            } catch (FileNotFoundException e) {
-                System.out.println("Error: File does not exist.");
-            }
-            return mapCharas;
-        }
-    }
-
-    /**
      * Initialises player object and sets initial starting positions and speed.
      * 
      * @param app
      */
     private void setupPlayer(PApplet app) {
 
+        this.playerLives = settings.getPlayerLives();
         int startRow = this.map.getPlayerRow();
         int startCol = this.map.getPlayerCol();
-        this.player = new Waka(startRow, startCol, this.speed, app);
+        this.player = new Waka(startRow, startCol, settings.getSpeed(), app);
     }
 
     /**
@@ -243,9 +151,9 @@ public class GameManager {
         for (int i = 0; i < this.ghosts.size(); i ++) {
 
             Ghost ghost = this.ghosts.get(i);
-            ghost.setSpeed(this.speed);
-            ghost.setGhostMode(this.ghostModes);
-            ghost.setFrightenedLength(this.frightenedLength);
+            ghost.setSpeed(settings.getSpeed());
+            ghost.setGhostMode(settings.getGhostModes());
+            ghost.setFrightenedLength(settings.getFrightenedLength());
         }
     }
 
@@ -294,15 +202,6 @@ public class GameManager {
      */
     public boolean playerWin() {
         return this.win;
-    }
-
-    /**
-     * Returns the ghost mode durations.
-     * 
-     * @return an int array of the duration of each ghost mode.
-     */
-    private int[] getGhostModes() {
-        return this.ghostModes;
     }
 
     /**

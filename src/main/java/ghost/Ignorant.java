@@ -9,7 +9,7 @@ import processing.core.PImage;
 public class Ignorant extends Ghost {
 
     /**
-     * Creates an instance of Ignorant, given x and y starting positions and a movement speed.
+     * Creates an instance of Ignorant with given x and y starting positions and movement speed.
      * 
      * @param x
      * @param y
@@ -42,7 +42,7 @@ public class Ignorant extends Ghost {
             
             // Checks whether straight line distance between player position and Ghost is more than
             // 8 units. If distance is over 8, target is Waka, otherwise target is map bottom left.
-            if (playerDist / GameObject.SPRITE_SIZE - 1 > 8) {
+            if ((playerDist / GameObject.SPRITE_SIZE) > 8) {
                 int targetX = playerX + GameObject.SPRITE_SIZE / 2;
                 int targetY = playerY + GameObject.SPRITE_SIZE / 2;
                 this.setTarget(targetX, targetY);

@@ -1,7 +1,7 @@
 package ghost;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.io.*;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,7 +12,7 @@ import processing.core.PImage;
 public class Map {
     
     private List<Character[]> mapText;
-    private Wall[][] loadMap;
+    private Wall[][] mapObjects;
     private int rows;
     private int cols;
 
@@ -24,31 +24,33 @@ public class Map {
     /**
      * Creates an instance of Map by interpreting a list of characters into corresponding 
      * GameObjects.
+     * 
      * @param mapText the list of characters parsed from a map text file.
      * @param app
      */
-    public Map(List<Character[]> mapText, PApplet app) {
+    public Map(String filename, PApplet app) {
 
-        this.mapText = mapText;
-        this.rows = mapText.size();
-        this.cols = mapText.get(0).length;
+        this.mapText = this.loadMap(filename);
+        this.rows = this.mapText.size();
+        this.cols = this.mapText.get(0).length;
         
         this.playerStartRow = 0;
         this.playerStartCol = 0;
         this.fruits = new ArrayList<Edible>();
         this.ghosts = new ArrayList<Ghost>();
 
-        this.loadMap = this.initMap(app);
+        this.mapObjects = this.initMap(app);
     }
 
     /**
      * Draws in the Walls of the Map.
+     * 
      * @param app
      */
     public void draw(PApplet app) {
         for (int i = 0; i < this.rows; i ++) {
             for (int j = 0; j < this.cols; j ++) {
-                Wall wall = this.loadMap[i][j];
+                Wall wall = this.mapObjects[i][j];
                 
                 if (wall != null) {
                     wall.draw(app);
@@ -80,11 +82,56 @@ public class Map {
     public List<Ghost> getGhosts() {
         return this.ghosts;
     }
+
+    /**
+     * Processes the text file of the Map layout into a list of characters.
+     * 
+     * @param filename the name of the Map file.
+     * @return a 2D list of the Map characters.
+     */
+    private List<Character[]> loadMap(String filename) {
+
+        if (filename == null) {
+            System.out.println("Error: File does not exist.");
+            return null;
+
+        } else {        
+            File mapFile = new File(filename);
+            List<Character[]> mapCharas = new ArrayList<Character[]>();
+
+            try {
+                Scanner scan = new Scanner(mapFile);
+
+                while (scan.hasNextLine()) {
+                    String line = scan.nextLine();
+                    char[] lineChars = line.toCharArray();
+                    if (lineChars.length == 0) {
+                        System.out.println("Error: Invalid file configuration.");
+                        System.exit(1);
+                    }
+
+                    // Converts individual chars in the char array into Characters for storage 
+                    // in the List and adds them to the 2d layout line by line.
+                    Character[] charArray = new Character[lineChars.length];
+                    for (int i = 0; i < lineChars.length; i ++) {
+                        charArray[i] = Character.valueOf(lineChars[i]);
+                    }
+                    mapCharas.add(charArray);
+                }
+                scan.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println("Error: File does not exist.");
+            }
+            return mapCharas;
+        }
+    }
     
     /**
      * Traverses the list of map characters, assigning them to corresponding GameObjects. Walls
      * are stored in the Map's wall array, the player starting position is set and Fruits and
      * Ghosts are stored in their respective lists.
+     * 
      * @param app
      * @return the created 2d Wall layout of the Map.
      */
@@ -96,15 +143,16 @@ public class Map {
 
         for (int i = 0; i < this.rows; i ++) {
             for (int j = 0; j < this.cols; j ++) {
+
                 Character currentChar = this.mapText.get(i)[j];
-                Wall cell = null;
 
                 switch (currentChar) {
                     case '0':
                         break;
                     
                     case '1': case '2': case '3': case '4': case '5': case '6':
-                        cell = new Wall(j, i, currentChar, app);
+                        Wall cell = new Wall(j, i, currentChar, app);
+                        wallArray[i][j] = cell;
                         break;
                     
                     case '7':
@@ -139,7 +187,6 @@ public class Map {
                         ghosts.add(new Whim(j, i, 0, app));
                         break;
                 }
-                wallArray[i][j] = cell;
             }
         }
 
@@ -203,9 +250,9 @@ public class Map {
 
         // Compares object boundaries after possible move to each Wall object and returns true
         // if there is an overlap.
-        for (int i = 0; i < this.loadMap.length; i ++) {
-            for (int j = 0; j < this.loadMap[i].length; j ++) {
-                Wall check = this.loadMap[i][j];
+        for (int i = 0; i < this.mapObjects.length; i ++) {
+            for (int j = 0; j < this.mapObjects[i].length; j ++) {
+                Wall check = this.mapObjects[i][j];
                 if (check == null) {
                     continue;
                 } else {

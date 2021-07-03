@@ -11,6 +11,7 @@ public class App extends PApplet {
 
     public static final int WIDTH = 448;
     public static final int HEIGHT = 576;
+    public static final int FPS = 60;
     private PFont font;
     private int frameCount;
     boolean showText;
@@ -27,7 +28,7 @@ public class App extends PApplet {
      */
     public void setup() {
 
-        frameRate(60);
+        frameRate(FPS);
 
         font = this.createFont("src/main/resources/PressStart2P-Regular.ttf", 44);
         this.textFont(font);
